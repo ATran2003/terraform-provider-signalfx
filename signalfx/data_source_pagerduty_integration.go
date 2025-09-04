@@ -31,16 +31,16 @@ func dataSourcePagerDutyIntegration() *schema.Resource {
 func dataSourcePagerDutyIntegrationRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*signalfxConfig)
 
-	in, err := config.Client.GetPagerDutyIntegrationByName(context.TODO(), d.Get("name").(string))
+	int, err := config.Client.GetPagerDutyIntegrationByName(context.TODO(), d.Get("name").(string))
 	if err != nil {
 		return err
 	}
 
-	if in == nil {
+	if int == nil {
 		d.SetId("")
 		return nil
 	}
 
-	d.SetId(in.Id)
-	return pagerDutyIntegrationAPIToTF(d, in)
+	d.SetId(int.Id)
+	return pagerDutyIntegrationAPIToTF(d, int)
 }

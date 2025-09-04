@@ -16,7 +16,7 @@ import (
 
 func IntegrationAWSRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*signalfxConfig)
-	in, err := config.Client.GetAWSCloudWatchIntegration(context.TODO(), d.Id())
+	int, err := config.Client.GetAWSCloudWatchIntegration(context.TODO(), d.Id())
 	if err != nil {
 		if strings.Contains(err.Error(), "404") {
 			d.SetId("")
@@ -24,12 +24,12 @@ func IntegrationAWSRead(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 
-	if in.AuthMethod == integration.EXTERNAL_ID && in.ExternalId != "" {
-		if err := d.Set("external_id", in.ExternalId); err != nil {
+	if int.AuthMethod == integration.EXTERNAL_ID && int.ExternalId != "" {
+		if err := d.Set("external_id", int.ExternalId); err != nil {
 			return err
 		}
 	}
-	if err := d.Set("signalfx_aws_account", in.SfxAwsAccountArn); err != nil {
+	if err := d.Set("signalfx_aws_account", int.SfxAwsAccountArn); err != nil {
 		return err
 	}
 

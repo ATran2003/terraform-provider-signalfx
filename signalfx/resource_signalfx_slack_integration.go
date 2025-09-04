@@ -56,7 +56,7 @@ func getSlackPayloadIntegration(d *schema.ResourceData) *integration.SlackIntegr
 
 func integrationSlackRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*signalfxConfig)
-	in, err := config.Client.GetSlackIntegration(context.TODO(), d.Id())
+	int, err := config.Client.GetSlackIntegration(context.TODO(), d.Id())
 	if err != nil {
 		if strings.HasPrefix(err.Error(), "404") {
 			d.SetId("")
@@ -64,7 +64,7 @@ func integrationSlackRead(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 
-	return slackIntegrationAPIToTF(d, in)
+	return slackIntegrationAPIToTF(d, int)
 }
 
 func slackIntegrationAPIToTF(d *schema.ResourceData, slack *integration.SlackIntegration) error {

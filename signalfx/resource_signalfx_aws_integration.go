@@ -270,7 +270,7 @@ func integrationAWSResource() *schema.Resource {
 func integrationAWSRead(d *schema.ResourceData, meta any) error {
 	config := meta.(*signalfxConfig)
 
-	in, err := config.Client.GetAWSCloudWatchIntegration(context.TODO(), d.Get("integration_id").(string))
+	int, err := config.Client.GetAWSCloudWatchIntegration(context.TODO(), d.Get("integration_id").(string))
 	if err != nil {
 		if strings.Contains(err.Error(), "404") {
 			d.SetId("")
@@ -278,21 +278,21 @@ func integrationAWSRead(d *schema.ResourceData, meta any) error {
 		return err
 	}
 
-	if in.AuthMethod == integration.EXTERNAL_ID {
-		if in.ExternalId != "" {
-			if err := d.Set("external_id", in.ExternalId); err != nil {
+	if int.AuthMethod == integration.EXTERNAL_ID {
+		if int.ExternalId != "" {
+			if err := d.Set("external_id", int.ExternalId); err != nil {
 				return err
 			}
 		}
 	}
-	if err := d.Set("name", in.Name); err != nil {
+	if err := d.Set("name", int.Name); err != nil {
 		return err
 	}
-	if err := d.Set("auth_method", in.AuthMethod); err != nil {
+	if err := d.Set("auth_method", int.AuthMethod); err != nil {
 		return err
 	}
 
-	return awsIntegrationAPIToTF(d, in)
+	return awsIntegrationAPIToTF(d, int)
 }
 
 func awsIntegrationAPIToTF(d *schema.ResourceData, aws *integration.AwsCloudWatchIntegration) error {
