@@ -9,12 +9,10 @@ import (
 	"fmt"
 	"log"
 	"math"
-	"net/http"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
-	sfxgo "github.com/signalfx/signalfx-go"
 	chart "github.com/signalfx/signalfx-go/chart"
 	"github.com/splunk-terraform/terraform-provider-signalfx/internal/check"
 	"github.com/splunk-terraform/terraform-provider-signalfx/internal/common"
@@ -428,17 +426,12 @@ func heatmapchartAPIToTF(d *schema.ResourceData, c *chart.Chart) error {
 	return nil
 }
 
-func isHeatmapChartNotFound(err error) bool {
-	sfxRespErr, ok := err.(*sfxgo.ResponseError)
-	return ok && sfxRespErr.Code() == http.StatusNotFound
-}
-
 func heatmapchartRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*signalfxConfig)
 
 	c, err := config.Client.GetChart(context.TODO(), d.Id())
 	if err != nil {
-		if isHeatmapChartNotFound(err) {
+		if isNotFoundError(err) {
 			d.SetId("")
 			return nil
 		}

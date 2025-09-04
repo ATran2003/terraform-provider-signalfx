@@ -9,14 +9,12 @@ import (
 	"fmt"
 	"log"
 	"math"
-	"net/http"
 	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 
-	sfxgo "github.com/signalfx/signalfx-go"
 	"github.com/splunk-terraform/terraform-provider-signalfx/internal/check"
 	"github.com/splunk-terraform/terraform-provider-signalfx/internal/common"
 	pmeta "github.com/splunk-terraform/terraform-provider-signalfx/internal/providermeta"
@@ -777,17 +775,12 @@ func timechartCreate(d *schema.ResourceData, meta interface{}) error {
 	return timechartAPIToTF(d, c)
 }
 
-func isTimechartNotFound(err error) bool {
-	sfxRespErr, ok := err.(*sfxgo.ResponseError)
-	return ok && sfxRespErr.Code() == http.StatusNotFound
-}
-
 func timechartRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*signalfxConfig)
 
 	c, err := config.Client.GetChart(context.TODO(), d.Id())
 	if err != nil {
-		if isTimechartNotFound(err) {
+		if isNotFoundError(err) {
 			d.SetId("")
 			return nil
 		}

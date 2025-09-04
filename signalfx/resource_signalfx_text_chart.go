@@ -7,10 +7,8 @@ import (
 	"context"
 	"encoding/json"
 	"log"
-	"net/http"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	sfxgo "github.com/signalfx/signalfx-go"
 	chart "github.com/signalfx/signalfx-go/chart"
 	"github.com/splunk-terraform/terraform-provider-signalfx/internal/common"
 	"github.com/splunk-terraform/terraform-provider-signalfx/internal/convert"
@@ -118,17 +116,12 @@ func textchartAPIToTF(d *schema.ResourceData, c *chart.Chart) error {
 	return nil
 }
 
-func isTextchartNotFound(err error) bool {
-	sfxRespErr, ok := err.(*sfxgo.ResponseError)
-	return ok && sfxRespErr.Code() == http.StatusNotFound
-}
-
 func textchartRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*signalfxConfig)
 
 	c, err := config.Client.GetChart(context.TODO(), d.Id())
 	if err != nil {
-		if isTextchartNotFound(err) {
+		if isNotFoundError(err) {
 			d.SetId("")
 			return nil
 		}

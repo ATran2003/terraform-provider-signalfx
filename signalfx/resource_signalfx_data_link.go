@@ -8,12 +8,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"net/http"
 	"regexp"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
-	sfxgo "github.com/signalfx/signalfx-go"
 	"github.com/signalfx/signalfx-go/datalink"
 	"github.com/signalfx/signalfx-go/util"
 )
@@ -398,17 +396,12 @@ func dataLinkAPIToTF(d *schema.ResourceData, dl *datalink.DataLink) error {
 	return nil
 }
 
-func isDataLinkNotFound(err error) bool {
-	sfxRespErr, ok := err.(*sfxgo.ResponseError)
-	return ok && sfxRespErr.Code() == http.StatusNotFound
-}
-
 func dataLinkRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*signalfxConfig)
 
 	dl, err := config.Client.GetDataLink(context.TODO(), d.Id())
 	if err != nil {
-		if isDataLinkNotFound(err) {
+		if isNotFoundError(err) {
 			d.SetId("")
 			return nil
 		}

@@ -7,11 +7,9 @@ import (
 	"context"
 	"encoding/json"
 	"log"
-	"net/http"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
-	sfxgo "github.com/signalfx/signalfx-go"
 	chart "github.com/signalfx/signalfx-go/chart"
 )
 
@@ -175,17 +173,12 @@ func eventfeedchartAPIToTF(d *schema.ResourceData, c *chart.Chart) error {
 	return nil
 }
 
-func isEventFeedChartNotFound(err error) bool {
-	sfxRespErr, ok := err.(*sfxgo.ResponseError)
-	return ok && sfxRespErr.Code() == http.StatusNotFound
-}
-
 func eventFeedChartRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*signalfxConfig)
 
 	c, err := config.Client.GetChart(context.TODO(), d.Id())
 	if err != nil {
-		if isEventFeedChartNotFound(err) {
+		if isNotFoundError(err) {
 			d.SetId("")
 			return nil
 		}
