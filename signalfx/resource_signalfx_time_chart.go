@@ -14,7 +14,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-
 	"github.com/splunk-terraform/terraform-provider-signalfx/internal/check"
 	"github.com/splunk-terraform/terraform-provider-signalfx/internal/common"
 	pmeta "github.com/splunk-terraform/terraform-provider-signalfx/internal/providermeta"

@@ -849,7 +849,6 @@ func dashboardCreate(d *schema.ResourceData, meta interface{}) error {
 
 func dashboardRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*signalfxConfig)
-
 	dash, err := config.Client.GetDashboard(context.TODO(), d.Id())
 	if err != nil {
 		if isNotFoundError(err) {
