@@ -523,7 +523,6 @@ func listchartAPIToTF(d *schema.ResourceData, c *chart.Chart) error {
 
 func listchartRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*signalfxConfig)
-
 	c, err := config.Client.GetChart(context.TODO(), d.Id())
 	if err != nil {
 		if isNotFoundError(err) {
