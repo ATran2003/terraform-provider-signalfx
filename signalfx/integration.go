@@ -13,6 +13,16 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
+func handleIntegrationRead(err error, d *schema.ResourceData) bool {
+	if err != nil {
+		if isNotFoundError(err) {
+			d.SetId("")
+		}
+		return false
+	}
+	return true
+}
+
 func handleIntegrationChange(err error, d *schema.ResourceData, in interface{}) bool {
 	if err != nil {
 		if strings.Contains(err.Error(), "40") {
